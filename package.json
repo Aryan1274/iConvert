@@ -56,10 +56,13 @@
     ],
     "win": {
       "icon": "build/icon.ico",
-      "artifactName": "iConvert-v2-${target}.${ext}",
       "target": [
         {
           "target": "nsis",
+          "arch": ["x64"]
+        },
+        {
+          "target": "portable",
           "arch": ["x64"]
         }
       ]
@@ -71,6 +74,9 @@
       "createStartMenuShortcut": true,
       "differentialPackage": false,
       "artifactName": "iConvert-v2-Setup.exe"
+    },
+    "portable": {
+      "artifactName": "iConvert-v2-Portable.exe"
     }
   },
   "devDependencies": {
