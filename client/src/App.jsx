@@ -1,9 +1,15 @@
 import { useState, useEffect, useRef } from 'react'
 import ConversionCard from './components/ConversionCard'
 import Footer from './components/Footer'
+import Navbar from './components/Navbar'
+import FeaturesView from './components/FeaturesView'
+import HowItWorksView from './components/HowItWorksView'
+import ComparisonView from './components/ComparisonView'
+import AboutView from './components/AboutView'
 
 function App() {
   const [theme, setTheme] = useState('dark')
+  const [activeTab, setActiveTab] = useState('converter')
   const [health, setHealth] = useState(null)
   const [loading, setLoading] = useState(true)
 
@@ -294,39 +300,32 @@ function App() {
       <input ref={videoFolderInput} type="file" webkitdirectory="" mozdirectory="" directory="" accept=".mov,.mp4" style={{ display: 'none' }}
         onChange={e => handleFilesSelected('video', e.target.files)} />
 
-      {/* ── Header ── */}
-      <header className="header">
-        <div className="header-brand">
-          <div className="header-logo">iC</div>
-          <div>
-            <div className="header-title">iConvert</div>
-            <div className="header-subtitle">iPhone Media Converter</div>
-          </div>
-        </div>
-        <div className="header-actions">
-          <div className="status-badge">
-            <span className={`status-dot ${loading ? '' : serverOnline ? 'online' : 'offline'}`}></span>
-            <span>{loading ? 'Connecting...' : serverOnline ? 'Server Online' : 'Server Offline'}</span>
-          </div>
-          <button className="theme-toggle" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} title="Toggle theme">
-            {theme === 'dark' ? '☀️' : '🌙'}
-          </button>
-        </div>
-      </header>
+      {/* ── Navigation Bar ── */}
+      <Navbar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        theme={theme}
+        setTheme={setTheme}
+        serverOnline={serverOnline}
+        loading={loading}
+      />
 
-      {/* ── Main ── */}
+      {/* ── Main Content Views ── */}
       <main className="main">
-        <section className="hero">
-          <h1 className="hero-title">Convert iPhone Media</h1>
-          <p className="hero-description">
-            Transform your iPhone photos and videos into formats that work everywhere.
-            Fast, private, and completely local.
-          </p>
-        </section>
+        {/* Converter View */}
+        {activeTab === 'converter' && (
+          <>
+            <section className="hero">
+              <h1 className="hero-title">Convert iPhone Media</h1>
+              <p className="hero-description">
+                Transform your iPhone photos and videos into universal JPEG and MP4 formats.
+                Fast, private, and completely local on your machine.
+              </p>
+            </section>
 
-        {/* ── Converter Cards (idle or while another type is active) ── */}
-        {phase === 'idle' && (
-          <div className="cards-grid">
+            {/* ── Converter Cards (idle or while another type is active) ── */}
+            {phase === 'idle' && (
+              <div className="cards-grid">
             <div
               className={`conversion-card image-card ${dragTarget === 'image' ? 'conversion-card--dragging' : ''}`}
               onDragOver={e => handleDragOver(e, 'image')}
@@ -554,6 +553,25 @@ function App() {
                 </button>
               )}
             </div>
+
+            {/* Coffee Support Callout on Conversion Done */}
+            <div className="content-coffee-banner" style={{ marginTop: '1.75rem' }}>
+              <div className="coffee-banner-content">
+                <span className="coffee-banner-emoji">☕</span>
+                <div>
+                  <h4>Saved time with iConvert?</h4>
+                  <p>100% private, free, and offline. If iConvert helped you today, consider buying a coffee!</p>
+                </div>
+              </div>
+              <a
+                href="https://buymeacoffee.com/arvr"
+                target="_blank"
+                rel="noreferrer"
+                className="btn-coffee-banner"
+              >
+                Buy Me a Coffee
+              </a>
+            </div>
           </div>
         )}
 
@@ -567,11 +585,33 @@ function App() {
             </span>
           </div>
         )}
-      </main>
+      </>
+    )}
 
-      <Footer />
-    </div>
-  )
+    {/* Features View */}
+    {activeTab === 'features' && (
+      <FeaturesView onStartConverting={() => setActiveTab('converter')} />
+    )}
+
+    {/* How It Works View */}
+    {activeTab === 'howItWorks' && (
+      <HowItWorksView onStartConverting={() => setActiveTab('converter')} />
+    )}
+
+    {/* Comparison View */}
+    {activeTab === 'comparison' && (
+      <ComparisonView onStartConverting={() => setActiveTab('converter')} />
+    )}
+
+    {/* About View */}
+    {activeTab === 'about' && (
+      <AboutView onStartConverting={() => setActiveTab('converter')} />
+    )}
+  </main>
+
+  <Footer setActiveTab={setActiveTab} />
+</div>
+)
 }
 
 export default App

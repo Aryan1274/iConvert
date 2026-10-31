@@ -14,9 +14,11 @@ const router = Router();
 // Resolve ffmpeg binary (system PATH or bundled ffmpeg-static)
 const FFMPEG = getFfmpegPath();
 
+import os from 'os';
+
 // Temp upload dir
-const UPLOAD_DIR = path.resolve('.iconvert-cache', 'uploads');
-const CACHE_DIR  = path.resolve('.iconvert-cache');
+const CACHE_DIR  = process.env.ICONVERT_CACHE_DIR || path.join(os.tmpdir(), 'iconvert-cache');
+const UPLOAD_DIR = path.join(CACHE_DIR, 'uploads');
 await fs.mkdir(UPLOAD_DIR, { recursive: true });
 
 const storage = multer.diskStorage({

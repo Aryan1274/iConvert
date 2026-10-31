@@ -2,12 +2,13 @@ const { app, BrowserWindow, shell } = require('electron');
 const path = require('path');
 const { fork } = require('child_process');
 const http = require('http');
+const fs = require('fs');
 
 let mainWindow = null;
 let serverProcess = null;
 const SERVER_PORT = 3001;
 
-function waitForServer(callback, maxRetries = 40) {
+function waitForServer(callback, maxRetries = 50) {
   let retries = 0;
   const check = () => {
     http.get(`http://localhost:${SERVER_PORT}/api/health`, (res) => {
@@ -22,7 +23,7 @@ function waitForServer(callback, maxRetries = 40) {
   const retry = () => {
     retries++;
     if (retries < maxRetries) {
-      setTimeout(check, 250);
+      setTimeout(check, 200);
     } else {
       console.warn('Server readiness timed out, loading interface anyway...');
       callback();
@@ -34,16 +35,34 @@ function waitForServer(callback, maxRetries = 40) {
 
 function startServer() {
   const isDev = !app.isPackaged;
-  const serverPath = isDev
-    ? path.join(__dirname, '../server/index.js')
-    : path.join(process.resourcesPath, 'server/index.js');
+  
+  // Potential server paths in dev or packaged app
+  const candidatePaths = isDev
+    ? [path.join(__dirname, '../server/index.js')]
+    : [
+        path.join(process.resourcesPath, 'server/index.js'),
+        path.join(app.getAppPath(), 'server/index.js')
+      ];
+
+  let serverPath = candidatePaths.find(p => fs.existsSync(p)) || candidatePaths[0];
+
+  const nodeModulesPaths = [
+    path.join(process.resourcesPath, 'server/node_modules'),
+    path.join(process.resourcesPath, 'app.asar/node_modules'),
+    path.join(__dirname, '../server/node_modules'),
+    path.join(__dirname, '../node_modules')
+  ].filter(p => fs.existsSync(p));
+
+  const env = {
+    ...process.env,
+    PORT: SERVER_PORT.toString(),
+    NODE_ENV: isDev ? 'development' : 'production',
+    NODE_PATH: nodeModulesPaths.join(path.delimiter),
+    RESOURCES_PATH: process.resourcesPath || ''
+  };
 
   serverProcess = fork(serverPath, [], {
-    env: {
-      ...process.env,
-      PORT: SERVER_PORT.toString(),
-      NODE_ENV: isDev ? 'development' : 'production'
-    },
+    env,
     stdio: 'inherit'
   });
 
@@ -54,10 +73,10 @@ function startServer() {
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 1240,
-    height: 840,
-    minWidth: 940,
-    minHeight: 660,
+    width: 1260,
+    height: 860,
+    minWidth: 960,
+    minHeight: 680,
     title: 'iConvert — iPhone Media Converter',
     icon: path.join(__dirname, '../build/icon.png'),
     backgroundColor: '#0a0a0f',
@@ -84,7 +103,6 @@ function createWindow() {
     });
   });
 
-  // Open external links in user's default browser
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     if (url.startsWith('http:') || url.startsWith('https:')) {
       shell.openExternal(url);

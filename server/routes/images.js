@@ -14,9 +14,11 @@ const execFileAsync = promisify(execFile);
 const FFMPEG = getFfmpegPath();
 const router = Router();
 
+import os from 'os';
+
 // Temp upload dir — files land here, get converted, then served from cache
-const UPLOAD_DIR = path.resolve('.iconvert-cache', 'uploads');
-const CACHE_DIR  = path.resolve('.iconvert-cache');
+const CACHE_DIR  = process.env.ICONVERT_CACHE_DIR || path.join(os.tmpdir(), 'iconvert-cache');
+const UPLOAD_DIR = path.join(CACHE_DIR, 'uploads');
 await fs.mkdir(UPLOAD_DIR, { recursive: true });
 
 const storage = multer.diskStorage({

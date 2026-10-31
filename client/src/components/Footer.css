@@ -162,6 +162,28 @@
   text-decoration-color: var(--text-muted);
 }
 
+.footer-btn-coffee {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #ffdd00;
+  color: #000000 !important;
+  font-weight: 700;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(255, 221, 0, 0.25);
+  transition: all 0.2s ease;
+  margin-left: 6px;
+}
+
+.footer-btn-coffee:hover {
+  background: #ffe333;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 221, 0, 0.4);
+}
+
 .footer-copy {
   font-size: 11px;
   color: var(--text-muted);

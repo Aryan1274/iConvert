@@ -153,10 +153,18 @@ function InfoModal({ pageKey, onClose }) {
 }
 
 // ── Footer Component ───────────────────────────────────────────────────────
-export default function Footer() {
+export default function Footer({ setActiveTab }) {
   const [modalPage, setModalPage] = useState(null)
 
-  const open = (key) => setModalPage(key)
+  const open = (key) => {
+    if (setActiveTab) {
+      if (key === 'about') { setActiveTab('about'); return; }
+      if (key === 'howItWorks') { setActiveTab('howItWorks'); return; }
+      if (key === 'quality') { setActiveTab('comparison'); return; }
+      if (key === 'batchDownload') { setActiveTab('converter'); return; }
+    }
+    setModalPage(key)
+  }
   const close = () => setModalPage(null)
 
   const features = [
@@ -241,7 +249,15 @@ export default function Footer() {
               <button className="footer-nav-link" onClick={() => open('quality')}>Quality</button>
               <button className="footer-nav-link" onClick={() => open('privacy')}>Privacy</button>
               <button className="footer-nav-link" onClick={() => open('batchDownload')}>Batch Convert</button>
-              <button className="footer-nav-link" onClick={() => open('download')}>Download .exe</button>
+              <a
+                href="https://buymeacoffee.com/arvr"
+                target="_blank"
+                rel="noreferrer"
+                className="footer-btn-coffee"
+                title="Support developer on Buy Me a Coffee"
+              >
+                ☕ Buy Me a Coffee
+              </a>
             </nav>
 
             <p className="footer-copy">

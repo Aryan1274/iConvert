@@ -27,9 +27,9 @@ export function getFfmpegPath() {
   }
 
   // 2. Check for the binary bundled inside the Electron .exe (resources/ffmpeg/)
-  // process.resourcesPath is set by Electron when app is packaged
-  if (process.resourcesPath) {
-    const electronBundled = path.join(process.resourcesPath, 'ffmpeg', 'ffmpeg.exe');
+  const resPath = process.env.RESOURCES_PATH || process.resourcesPath;
+  if (resPath) {
+    const electronBundled = path.join(resPath, 'ffmpeg', 'ffmpeg.exe');
     try {
       execFileSync(electronBundled, ['-version'], { stdio: 'ignore', timeout: 3000 });
       console.log(`✅ [ffmpeg] Using Electron-bundled ffmpeg: ${electronBundled}`);

@@ -1,6 +1,6 @@
 {
   "name": "iconvert",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Local iPhone Media Converter - HEIC/HEIF to JPEG & MOV/HEVC to MP4",
   "author": "iConvert",
   "private": true,
@@ -23,6 +23,7 @@
     "files": [
       "electron/**/*",
       "server/**/*",
+      "!server/node_modules/**/*",
       "client/dist/**/*",
       "!**/*.mov",
       "!**/*.MOV",
@@ -36,8 +37,17 @@
         "to": "server",
         "filter": [
           "**/*",
-          "!node_modules/.cache/**/*"
+          "!node_modules/**/*",
+          "!.iconvert-cache/**/*"
         ]
+      },
+      {
+        "from": "server/node_modules",
+        "to": "server/node_modules"
+      },
+      {
+        "from": "client/dist",
+        "to": "client/dist"
       },
       {
         "from": "server/node_modules/ffmpeg-static/ffmpeg.exe",
@@ -46,13 +56,10 @@
     ],
     "win": {
       "icon": "build/icon.ico",
+      "artifactName": "iConvert-v2-${target}.${ext}",
       "target": [
         {
           "target": "nsis",
-          "arch": ["x64"]
-        },
-        {
-          "target": "portable",
           "arch": ["x64"]
         }
       ]
@@ -62,7 +69,8 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "differentialPackage": false
+      "differentialPackage": false,
+      "artifactName": "iConvert-v2-Setup.exe"
     }
   },
   "devDependencies": {
